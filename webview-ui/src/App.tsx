@@ -1,32 +1,11 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { ReactFlow, Controls, Background, applyNodeChanges, applyEdgeChanges, NodeChange, EdgeChange, Node, Edge } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { vscode } from './utilities/vscode';
 import { VSCodeButton } from '@vscode/webview-ui-toolkit/react';
 
-const initialNodes: Node[] = [
-  {
-    id: '1',
-    data: { label: 'Start: Order Checkout' },
-    position: { x: 250, y: 5 },
-    type: 'input',
-  },
-  {
-    id: '2',
-    data: { label: 'Validate User' },
-    position: { x: 100, y: 100 },
-  },
-  {
-    id: '3',
-    data: { label: 'Check Inventory' },
-    position: { x: 400, y: 100 },
-  },
-];
-
-const initialEdges: Edge[] = [
-  { id: 'e1-2', source: '1', target: '2', animated: true },
-  { id: 'e1-3', source: '1', target: '3', animated: true },
-];
+const initialNodes: Node[] = [];
+const initialEdges: Edge[] = [];
 
 function App() {
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
@@ -47,6 +26,39 @@ function App() {
       text: 'Hello from React Flow!',
     });
   };
+
+  useEffect(() => {
+    // Notify extension that webview is ready
+    vscode.postMessage({ command: 'webview-ready' });
+
+    const handleMessage = (event: MessageEvent) => {
+      const message = event.data;
+      console.log('Webview received message:', message); // Debug log
+
+      if (message.command === 'update-graph') {
+        const { nodes: rawNodes, edges: rawEdges } = message.data;
+        
+        console.log('Raw nodes:', rawNodes); // Debug log
+        console.log('Raw edges:', rawEdges); // Debug log
+
+        // Transform nodes to React Flow format
+        const layoutedNodes = rawNodes.map((node: any, index: number) => ({
+          ...node,
+          // Use provided position or fallback to simple layout
+          position: node.position || { x: 250, y: index * 100 + 50 },
+          data: { label: node.label }
+        }));
+
+        console.log('Processed nodes:', layoutedNodes); // Debug log
+
+        setNodes(layoutedNodes);
+        setEdges(rawEdges);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
 
   return (
     <div style={{ width: '100%', height: '100vh', display: 'flex', flexDirection: 'column' }}>

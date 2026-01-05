@@ -93,6 +93,36 @@ graph TD
 
 ---
 
+## 💻 开发指南 (Development Guide)
+
+### 环境准备 (Prerequisites)
+
+*   Node.js (Recommended: 18.x)
+*   npm
+
+### 安装依赖 (Installation)
+
+```bash
+npm install
+```
+
+### 调试步骤 (Debugging Steps)
+
+1.  **启动调试 (Start Debugging)**:
+    *   在 VS Code 中打开本项目。
+    *   按下 `F5` 键，或点击左侧调试图标并选择 "Run Extension"。
+    *   这将启动一个新的 VS Code 窗口 (Extension Development Host)。
+
+2.  **测试功能 (Test Functionality)**:
+    *   在新的 Host 窗口中，打开任意代码文件（例如 TypeScript 或 Java 文件）。
+    *   右键点击某个函数名，选择 **"CodeFlow: Visualize"**。
+    *   此时应弹出 CodeFlow 面板并显示流程图。
+
+3.  **Webview 调试 (Webview Debugging)**:
+    *   如果在 Webview 中遇到问题，可以在 Host 窗口中按下 `Ctrl+Shift+I` (Windows) / `Cmd+Option+I` (Mac) 打开开发者工具 (Developer Tools)。
+
+---
+
 ## 📝 License
 
 MIT License © 2024 CodeFlow AI Team
